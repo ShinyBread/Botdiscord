@@ -11,11 +11,13 @@ import TKEN
 from lista_melvins import listaMelvin
 #from webserver import keep_alive
 from itertools import cycle
- 
+import datetime
+
 button = discord.ui.Button
 intents = discord.Intents.all()
 Melvinator = commands.Bot(command_prefix='!', intents=intents)
 status=cycle(['Tuki','tuki'])
+
 
 @Melvinator.event
 async def on_ready():
@@ -23,6 +25,7 @@ async def on_ready():
   synced = await Melvinator.tree.sync()
   print("Slash Commands sincronizados:"+ str(len(synced)))
   change_status.start()
+
 
 @tasks.loop(seconds=5)
 async def change_status():
@@ -34,6 +37,7 @@ async def on_message(interaction: discord.Interaction):
     afortunado = str(random.choice(interaction.guild.members))
     autor=str(f'{interaction.user.name}#{interaction.user.discriminator}')
     print(autor,afortunado) #esta weas es pa testear
+    
     if autor == afortunado :
        await interaction.response.send_message(embed=embed)
     else:
@@ -63,10 +67,29 @@ async def on_message(message):
   args= message.content.split(" ")[1:]
   if message.author==Melvinator.user:
     return
+  
   if "CL" in message.content:
     embed=discord.Embed(title= "No hablen del CL, el esta preso")
     await message.channel.send(embed=embed)
   
+  if "/j" in message.content:
+    global cont_fomes
+    
+    try:
+      open("fomes.txt", "x").close()
+      cont_fomes = 0
+    except:
+       with open("fomes.txt", "r") as file:
+         cont_fomes = int(file.readlines()[0])
+
+    cont_fomes+=1
+    embed=discord.Embed(title= f"Chiste fomes contados por Gabo : {cont_fomes}")
+    await message.channel.send(embed=embed)
+    with open("fomes.txt", "w") as file:
+      file.write(str(cont_fomes))
+
+      file.close() 
+
   if "tuki" in message.content:
      await message.channel.send("Tuki")
   if "Tuki" in message.content:
@@ -75,16 +98,12 @@ async def on_message(message):
      await message.channel.send("Hola!")
   if message.content.startswith("alo"):
      await message.channel.send("alo")
-  
-  
   if message.content.endswith("once"):
     await message.channel.send("chupalo entonce")
   if message.content.endswith("11"):
     await message.channel.send("chupalo entonce")
-  if message.content=="11":
-    await message.channel.send("chupalo entonce")
   
-  
+
 
 #keep_alive()
 Melvinator.run(TKEN.TOKEN)
