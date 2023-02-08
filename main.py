@@ -24,8 +24,6 @@ class Melvinator_Live(commands.Bot):
         else:
           print(f'Extension {ext} ya está cargada.')
 
-    
-    
     @tasks.loop(seconds=5)
     async def change_status(self):
         await self.change_presence(activity=discord.Game(next(status)))
