@@ -17,7 +17,6 @@ class MessageEvents(commands.Cog):
             await message.channel.send(embed=embed)
         if "tuki" in message.content:
             await message.channel.send("Tuki")
-            print("tuki")
         if "Tuki" in message.content:
             await message.channel.send("Tuki")
         if message.content.startswith("Hola"):
