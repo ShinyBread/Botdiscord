@@ -1,4 +1,4 @@
-# BotDiscord
+# ShinyBot
 
 
 [BETA]
