@@ -1,4 +1,4 @@
-# ShinyBot
+# ShinyTestBot
 
 
 [BETA]
