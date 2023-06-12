@@ -1,36 +1,46 @@
-import discord
-from itertools import cycle
-from discord.ext import commands, tasks
-from webserver import keep_alive
-import TKEN
 import os
+from dotenv import load_dotenv
+import discord
+from discord.ext import commands, tasks
+import aiohttp
+from itertools import cycle
 
-status = cycle(["Tuki", "tuki", "Melvinator_V.1.2!!"])
+load_dotenv("Token.env")  
+TOKEN = os.getenv('TOKEN')
 
-class Melvinator_Live(commands.Bot):
+status = cycle(["Tuki", "tuki"])
+
+class ShinyBotTest(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix=commands.when_mentioned_or('.'), intents=discord.Intents().all())
+        super().__init__(
+            command_prefix='!',
+            intents=discord.Intents.all(),
+            application_id=1115333103213355030
+        )
+        self.initial_extensions = []
 
-    async def load_cogs(self):
-        for file in os.listdir("cogs"):
-            if file.endswith(".py"):
-                cog_name = file[:-3]
-                try:
-                    await self.load_extension(f"cogs.{cog_name}")
-                    print(f"Extension {cog_name} loaded successfully")
-                except Exception as e:
-                    print(f"Failed to load extension {cog_name}: {e}")
+    async def setup_extensions(self):
+        for folder_name in os.listdir("cogs"):
+            if os.path.isdir(os.path.join("cogs", folder_name)):
+                for filename in os.listdir(os.path.join("cogs", folder_name)):
+                    if filename.endswith(".py"):
+                        cog = f"cogs.{folder_name}.{filename[:-3]}"
+                        self.initial_extensions.append(cog)
+                        await self.load_extension(cog)
+                        print(f"Loaded cog: {cog}")
+        await Shinybot.tree.sync()
     
     @tasks.loop(seconds=5)
     async def change_status(self):
         await self.change_presence(activity=discord.Game(next(status)))
-    
+
+    async def close(self):
+        await super().close()
+        await self.session.close()
+
     async def on_ready(self):
-        print(f"{self.user} has logged in.")
-        await self.load_cogs()
-        self.change_status.start()
+        print(f'{self.user} está listo!')
+        await self.setup_extensions()
 
-client = Melvinator_Live()
-
-keep_alive()
-client.run(TKEN.TOKEN)
+Shinybot = ShinyBotTest()
+Shinybot.run(TOKEN)
