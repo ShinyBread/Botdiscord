@@ -1,4 +1,4 @@
 # ShinyTestBot
 
 
-[BETA]
+Template de bot en python para discord
