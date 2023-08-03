@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands, tasks
 import aiohttp
 from itertools import cycle
+from pathlib import Path
 
 load_dotenv("Token.env")  
 TOKEN = os.getenv('TOKEN')
@@ -20,16 +21,16 @@ class ShinyBotTest(commands.Bot):
         self.initial_extensions = []
 
     async def setup_extensions(self):
-        for folder_name in os.listdir("cogs"):
-            if os.path.isdir(os.path.join("cogs", folder_name)):
-                for filename in os.listdir(os.path.join("cogs", folder_name)):
-                    if filename.endswith(".py"):
-                        cog = f"cogs.{folder_name}.{filename[:-3]}"
-                        self.initial_extensions.append(cog)
-                        await self.load_extension(cog)
-                        print(f"Loaded cog: {cog}")
-        await Shinybot.tree.sync()
-    
+        cogs_path = Path("cogs")
+        for path in cogs_path.glob("**/*.py"):
+            if path.is_file():
+                cog = f"cogs.{path.parent.name}.{path.stem}"
+                self.initial_extensions.append(cog)
+                await self.load_extension(cog)
+                print(f"Loaded cog: {cog}")
+
+        await self.tree.sync()
+
     @tasks.loop(seconds=5)
     async def change_status(self):
         await self.change_presence(activity=discord.Game(next(status)))
@@ -42,5 +43,5 @@ class ShinyBotTest(commands.Bot):
         print(f'{self.user} está listo!')
         await self.setup_extensions()
 
-Shinybot = ShinyBotTest()
-Shinybot.run(TOKEN)
+ShinyBot = ShinyBotTest()
+ShinyBot.run(TOKEN)

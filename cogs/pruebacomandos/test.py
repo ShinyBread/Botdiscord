@@ -7,11 +7,11 @@ class test(commands.Cog):
         self.Shinybot=Shinybot
 
     @app_commands.command(
-        name= "introduce",
-        description="describete"
+        name= "test",
+        description="prueba el bot"
     )
-    async def introduce(self, interaction: discord.Interaction, nombre: str, edad: int) -> None:
-        await interaction.response.send_message(f'Mi nombre es: {nombre} y mi edad es: {edad}')
+    async def test(self, interaction: discord.Interaction, texto: str, numero: int) -> None:
+        await interaction.response.send_message(f'string: {texto} y numero: {numero}')
 
 async def setup(Shinybot: commands.Bot) -> None:
     await Shinybot.add_cog(test(Shinybot))
