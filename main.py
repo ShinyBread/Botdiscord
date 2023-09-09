@@ -42,6 +42,7 @@ class ShinyBotTest(commands.Bot):
     async def on_ready(self):
         print(f'{self.user} está listo!')
         await self.setup_extensions()
+        self.change_status.start()
 
 ShinyBot = ShinyBotTest()
 ShinyBot.run(TOKEN)
